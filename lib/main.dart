@@ -29,7 +29,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _textController = TextEditingController();
   double fontSize = 20;
   Color _selectedColor = Colors.black;
-  bool edit = false;
+  String _selectedFontStyle = 'Normal';
   final Map<String, Color> colorMap = {
     'Red': Colors.red,
     'Blue': Colors.blue,
@@ -43,6 +43,15 @@ class _MyHomePageState extends State<MyHomePage> {
   final List<double> fontSizeList = [
     12, 16, 20, 24, 28, 32, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60
   ];
+  final List<String> fontStyleList = [
+    'Normal',
+    'Italic',
+    'Bold',
+    'Bold Italic',
+    'Underline',
+    'Strikethrough',
+  ];
+
   double _selectedFontSize = 12;
 
   @override
@@ -57,6 +66,17 @@ class _MyHomePageState extends State<MyHomePage> {
                 style: TextStyle(
                   color: _selectedColor,
                   fontSize: _selectedFontSize,
+                  fontStyle: _selectedFontStyle == 'Italic'
+                      ? FontStyle.italic
+                      : FontStyle.normal,
+                  fontWeight: _selectedFontStyle == 'Bold'
+                      ? FontWeight.bold
+                      : FontWeight.normal,
+                  decoration: _selectedFontStyle == 'Underline'
+                      ? TextDecoration.underline
+                      : _selectedFontStyle == 'Strikethrough'
+                      ? TextDecoration.lineThrough
+                      : null,
                 ),
                 controller: _textController,
                 validator: (text) {
@@ -65,12 +85,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   }
                   return null;
                 },
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   filled: true,
-                  fillColor: Theme
-                      .of(context)
-                      .colorScheme
-                      .background,
                   border: InputBorder.none,
                   hintText: "Enter your text here", // Remove underline
                 ),
@@ -86,68 +102,94 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void showItems() {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return SimpleDialog(
-            backgroundColor: Colors.transparent,
-            contentPadding: EdgeInsets.all(16),
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                margin: EdgeInsets.only(bottom: 16), // Adjust the margin as needed
-                child: DropdownButton<Color>(
-                  underline: Container(),
-                  elevation: 0,
-                  value: _selectedColor,
-                  onChanged: (Color? newValue) {
-                    setState(() {
-                      _selectedColor = newValue!;
-                    });
-                    Navigator.pop(context); // Close the dialog after selecting a color
-                  },
-                  items: colorMap.keys.map<DropdownMenuItem<Color>>(
-                        (String key) {
-                      return DropdownMenuItem<Color>(
-                        value: colorMap[key],
-                        child: Text(key),
-                      );
-                    },
-                  ).toList(),
-                ),
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          backgroundColor: Colors.transparent,
+          contentPadding: EdgeInsets.all(16),
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
               ),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: DropdownButton<double>(
-                  elevation: 0,
-                  underline: Container(),
-                  value: _selectedFontSize,
-                  onChanged: (double? newValue) {
-                    setState(() {
-                      _selectedFontSize = newValue!;
-                    });
-                    Navigator.pop(context); // Close the dialog after selecting a font size
+              margin: EdgeInsets.only(bottom: 16),
+              child: DropdownButton<Color>(
+                underline: Container(),
+                elevation: 0,
+                value: _selectedColor,
+                onChanged: (Color? newValue) {
+                  setState(() {
+                    _selectedColor = newValue!;
+                  });
+                  Navigator.pop(context);
+                },
+                items: colorMap.keys.map<DropdownMenuItem<Color>>(
+                      (String key) {
+                    return DropdownMenuItem<Color>(
+                      value: colorMap[key],
+                      child: Center(child: Text(key)), // Center the text
+                    );
                   },
-                  items: fontSizeList.map<DropdownMenuItem<double>>(
-                        (double fontSize) {
-                      return DropdownMenuItem<double>(
-                        value: fontSize,
-                        child: Text(fontSize.toString()),
-                      );
-                    },
-                  ).toList(),
-                ),
+                ).toList(),
               ),
-            ],
-          );
-
-        },
-      );
+            ),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              margin: EdgeInsets.only(bottom: 16),
+              child: DropdownButton<double>(
+                elevation: 0,
+                underline: Container(),
+                value: _selectedFontSize,
+                onChanged: (double? newValue) {
+                  setState(() {
+                    _selectedFontSize = newValue!;
+                  });
+                  Navigator.pop(context);
+                },
+                items: fontSizeList.map<DropdownMenuItem<double>>(
+                      (double fontSize) {
+                    return DropdownMenuItem<double>(
+                      value: fontSize,
+                      child: Center(child: Text(fontSize
+                          .toString())), // Center the text
+                    );
+                  },
+                ).toList(),
+              ),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: DropdownButton<String>(
+                elevation: 0,
+                underline: Container(),
+                value: _selectedFontStyle,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedFontStyle = newValue!;
+                  });
+                  Navigator.pop(context);
+                },
+                items: fontStyleList.map<DropdownMenuItem<String>>(
+                      (String fontStyle) {
+                    return DropdownMenuItem<String>(
+                      value: fontStyle,
+                      child: Center(child: Text(fontStyle)), // Center the text
+                    );
+                  },
+                ).toList(),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
