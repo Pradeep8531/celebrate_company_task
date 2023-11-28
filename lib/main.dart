@@ -30,6 +30,7 @@ class _MyHomePageState extends State<MyHomePage> {
   double fontSize = 20;
   Color _selectedColor = Colors.black;
   String _selectedFontStyle = 'Normal';
+  String _Edittext = "Press to Edit";
   final Map<String, Color> colorMap = {
     'Red': Colors.red,
     'Blue': Colors.blue,
@@ -38,11 +39,18 @@ class _MyHomePageState extends State<MyHomePage> {
     'Purple': Colors.purple,
     'Black': Colors.black,
     'White': Colors.white,
-    // Add more colors as needed
+    'Orange': Colors.orange,
+    'Pink': Colors.pink,
+    'Cyan': Colors.cyan,
+    'Brown': Colors.brown,
+    'Grey': Colors.grey,
   };
+
   final List<double> fontSizeList = [
-    12, 16, 20, 24, 28, 32, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60
+    12, 16, 20, 24, 28, 32, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60,
+    62, 64, 66, 68, 70,
   ];
+
   final List<String> fontStyleList = [
     'Normal',
     'Italic',
@@ -50,7 +58,12 @@ class _MyHomePageState extends State<MyHomePage> {
     'Bold Italic',
     'Underline',
     'Strikethrough',
+    'Normal Bold',
+    'Normal Italic',
+    'Bold Underline',
+    'Italic Strikethrough',
   ];
+
 
   double _selectedFontSize = 12;
 
@@ -58,138 +71,186 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: TextFormField(
-                style: TextStyle(
-                  color: _selectedColor,
-                  fontSize: _selectedFontSize,
-                  fontStyle: _selectedFontStyle == 'Italic'
-                      ? FontStyle.italic
-                      : FontStyle.normal,
-                  fontWeight: _selectedFontStyle == 'Bold'
-                      ? FontWeight.bold
-                      : FontWeight.normal,
-                  decoration: _selectedFontStyle == 'Underline'
-                      ? TextDecoration.underline
-                      : _selectedFontStyle == 'Strikethrough'
-                      ? TextDecoration.lineThrough
-                      : null,
-                ),
-                controller: _textController,
-                validator: (text) {
-                  if (text == null || text.isEmpty) {
-                    return 'Text Is Empty';
-                  }
-                  return null;
-                },
-                decoration: const InputDecoration(
-                  filled: true,
-                  border: InputBorder.none,
-                  hintText: "Enter your text here", // Remove underline
-                ),
-                onTap: () {
-                  showItems();
-                },
-              ),
+        child: TextButton(onPressed: () { showItems(); },
+          child: Text(_Edittext,
+            style: TextStyle(
+              color: _selectedColor,
+              fontSize: _selectedFontSize,
+              fontStyle: _selectedFontStyle == 'Italic'
+                  ? FontStyle.italic
+                  : FontStyle.normal,
+              fontWeight: _selectedFontStyle == 'Bold'
+                  ? FontWeight.bold
+                  : FontWeight.normal,
+              decoration: _selectedFontStyle == 'Underline'
+                  ? TextDecoration.underline
+                  : _selectedFontStyle == 'Strikethrough'
+                  ? TextDecoration.lineThrough
+                  : null,
             ),
-          ],
+          ),
+
         ),
       ),
     );
   }
 
+
+
+
   void showItems() {
+    SimpleDialog dialog;
+
+    dialog = SimpleDialog(
+      backgroundColor: Colors.transparent,
+      contentPadding: EdgeInsets.all(16),
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          margin: EdgeInsets.only(bottom: 16),
+          child: DropdownButton<Color>(
+            underline: Container(),
+            elevation: 0,
+            value: _selectedColor,
+            onChanged: (Color? newValue) {
+              setState(() {
+                _selectedColor = newValue!;
+              });
+
+            },
+            items: colorMap.keys.map<DropdownMenuItem<Color>>(
+                  (String key) {
+                return DropdownMenuItem<Color>(
+                  value: colorMap[key],
+                  child: Center(child: Text(key)),
+                );
+              },
+            ).toList(),
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          margin: EdgeInsets.only(bottom: 16),
+          child: DropdownButton<double>(
+            elevation: 0,
+            underline: Container(),
+            value: _selectedFontSize,
+            onChanged: (double? newValue) {
+              setState(() {
+                _selectedFontSize = newValue!;
+              });
+
+            },
+            items: fontSizeList.map<DropdownMenuItem<double>>(
+                  (double fontSize) {
+                return DropdownMenuItem<double>(
+                  value: fontSize,
+                  child: Center(child: Text(fontSize.toString())),
+                );
+              },
+            ).toList(),
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: DropdownButton<String>(
+            elevation: 0,
+            underline: Container(),
+            value: _selectedFontStyle,
+            onChanged: (String? newValue) {
+              setState(() {
+                _selectedFontStyle = newValue!;
+              });
+
+            },
+            items: fontStyleList.map<DropdownMenuItem<String>>(
+                  (String fontStyle) {
+                return DropdownMenuItem<String>(
+                  value: fontStyle,
+                  child: Center(child: Text(fontStyle)),
+                );
+              },
+            ).toList(),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: TextFormField(
+              style: TextStyle(
+                color: _selectedColor,
+                fontSize: _selectedFontSize,
+                fontStyle: _selectedFontStyle == 'Italic'
+                    ? FontStyle.italic
+                    : FontStyle.normal,
+                fontWeight: _selectedFontStyle == 'Bold'
+                    ? FontWeight.bold
+                    : FontWeight.normal,
+                decoration: _selectedFontStyle == 'Underline'
+                    ? TextDecoration.underline
+                    : _selectedFontStyle == 'Strikethrough'
+                    ? TextDecoration.lineThrough
+                    : null,
+              ),
+              controller: _textController,
+              validator: (text) {
+                if (text == null || text.isEmpty) {
+                  return 'Text Is Empty';
+                }
+                return null;
+              },
+              decoration: const InputDecoration(
+                filled: true,
+                border: InputBorder.none,
+                hintText: "Enter your text here",
+              ),
+              onChanged: (text) {
+                setState(() {
+                  _Edittext = text;
+                });
+              },
+            ),
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Save'),
+            ),
+          ],
+        ),
+      ],
+    );
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return SimpleDialog(
-          backgroundColor: Colors.transparent,
-          contentPadding: EdgeInsets.all(16),
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              margin: EdgeInsets.only(bottom: 16),
-              child: DropdownButton<Color>(
-                underline: Container(),
-                elevation: 0,
-                value: _selectedColor,
-                onChanged: (Color? newValue) {
-                  setState(() {
-                    _selectedColor = newValue!;
-                  });
-                  Navigator.pop(context);
-                },
-                items: colorMap.keys.map<DropdownMenuItem<Color>>(
-                      (String key) {
-                    return DropdownMenuItem<Color>(
-                      value: colorMap[key],
-                      child: Center(child: Text(key)), // Center the text
-                    );
-                  },
-                ).toList(),
-              ),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              margin: EdgeInsets.only(bottom: 16),
-              child: DropdownButton<double>(
-                elevation: 0,
-                underline: Container(),
-                value: _selectedFontSize,
-                onChanged: (double? newValue) {
-                  setState(() {
-                    _selectedFontSize = newValue!;
-                  });
-                  Navigator.pop(context);
-                },
-                items: fontSizeList.map<DropdownMenuItem<double>>(
-                      (double fontSize) {
-                    return DropdownMenuItem<double>(
-                      value: fontSize,
-                      child: Center(child: Text(fontSize
-                          .toString())), // Center the text
-                    );
-                  },
-                ).toList(),
-              ),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: DropdownButton<String>(
-                elevation: 0,
-                underline: Container(),
-                value: _selectedFontStyle,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedFontStyle = newValue!;
-                  });
-                  Navigator.pop(context);
-                },
-                items: fontStyleList.map<DropdownMenuItem<String>>(
-                      (String fontStyle) {
-                    return DropdownMenuItem<String>(
-                      value: fontStyle,
-                      child: Center(child: Text(fontStyle)), // Center the text
-                    );
-                  },
-                ).toList(),
-              ),
-            ),
-          ],
-        );
+        return dialog;
       },
     );
   }
+
 }
