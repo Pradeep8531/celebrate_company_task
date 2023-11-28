@@ -31,6 +31,10 @@ class _MyHomePageState extends State<MyHomePage> {
   Color _selectedColor = Colors.black;
   String _selectedFontStyle = 'Normal';
   String _Edittext = "Press to Edit";
+  Offset _position = Offset(0, 0);
+
+
+
   final Map<String, Color> colorMap = {
     'Red': Colors.red,
     'Blue': Colors.blue,
@@ -68,29 +72,82 @@ class _MyHomePageState extends State<MyHomePage> {
   double _selectedFontSize = 12;
 
   @override
+  void initState() {
+    super.initState();
+
+    // Center the initial position on the screen
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      final RenderBox renderBox =
+      context.findRenderObject() as RenderBox;
+      final screenSize = renderBox.size;
+
+      setState(() {
+        _position = Offset(
+          (screenSize.width - _selectedFontSize) / 2,
+          (screenSize.height - _selectedFontSize) / 2,
+        );
+      });
+    });
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: TextButton(onPressed: () { showItems(); },
-          child: Text(_Edittext,
-            style: TextStyle(
-              color: _selectedColor,
-              fontSize: _selectedFontSize,
-              fontStyle: _selectedFontStyle == 'Italic'
-                  ? FontStyle.italic
-                  : FontStyle.normal,
-              fontWeight: _selectedFontStyle == 'Bold'
-                  ? FontWeight.bold
-                  : FontWeight.normal,
-              decoration: _selectedFontStyle == 'Underline'
-                  ? TextDecoration.underline
-                  : _selectedFontStyle == 'Strikethrough'
-                  ? TextDecoration.lineThrough
-                  : null,
+      body: Stack(
+        children: [
+          Positioned(
+            left: _position.dx,
+            top: _position.dy,
+            child: Draggable(
+              feedback: Container(
+                child: Text(
+                  _Edittext,
+                  style: TextStyle(
+                    color: _selectedColor,
+                    fontSize: _selectedFontSize,
+                    fontStyle: _selectedFontStyle == 'Italic'
+                        ? FontStyle.italic
+                        : FontStyle.normal,
+                    fontWeight: _selectedFontStyle == 'Bold'
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                    decoration: _selectedFontStyle == 'Underline'
+                        ? TextDecoration.underline
+                        : _selectedFontStyle == 'Strikethrough'
+                        ? TextDecoration.lineThrough
+                        : null,
+                  ),
+                ),
+              ),
+              child: TextButton(
+                onPressed: () {
+                  showItems();
+                },
+                child: Text(_Edittext,
+                  style: TextStyle(
+                    color: _selectedColor,
+                    fontSize: _selectedFontSize,
+                    fontStyle: _selectedFontStyle == 'Italic'
+                        ? FontStyle.italic
+                        : FontStyle.normal,
+                    fontWeight: _selectedFontStyle == 'Bold'
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                    decoration: _selectedFontStyle == 'Underline'
+                        ? TextDecoration.underline
+                        : _selectedFontStyle == 'Strikethrough'
+                        ? TextDecoration.lineThrough
+                        : null,
+                  ),
+                ),
+              ),
+              onDraggableCanceled: (_, offset) {
+                setState(() {
+                  _position = offset;
+                });
+              },
             ),
           ),
-
-        ),
+        ],
       ),
     );
   }
